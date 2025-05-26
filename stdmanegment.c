@@ -194,18 +194,23 @@ void sortFileByChoice() {
     struct student s[100];
     int count = 0, choice;
 
-    FILE *student = fopen("student.txt", "r");
-    if (student == NULL) {
+    FILE *fp = fopen("student.txt", "r");
+    if (fp == NULL) {
         printf("Error opening file.\n");
         return;
     }
 
     // Load records into array
-    while (fscanf(student, "%s %d %f %d", s[count].name, &s[count].roll_no,
-                  &s[count].marks.sgpa, &s[count].marks.isa) != EOF) {
+    while (count < 100 && fscanf(fp, "%s %d %f %d", s[count].name, &s[count].roll_no,
+                                 &s[count].marks.sgpa, &s[count].marks.isa) == 4) {
         count++;
-                  }
-    fclose(student);
+    }
+    fclose(fp);
+
+    if (count == 0) {
+        printf("No records found to sort.\n");
+        return;
+    }
 
     // Ask user for sort type
     printf("\nChoose sorting field:\n");
@@ -213,13 +218,16 @@ void sortFileByChoice() {
     printf("2. Name (A-Z)\n");
     printf("3. SGPA (descending)\n");
     printf("Enter your choice: ");
-    scanf("%d", &choice);
+    if (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
+        printf("Invalid choice.\n");
+        while (getchar() != '\n');
+        return;
+    }
 
-    // Sorting logic
+    // Sorting logic (Bubble Sort)
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             int swap = 0;
-
             if (choice == 1 && s[j].roll_no > s[j + 1].roll_no) {
                 swap = 1;
             } else if (choice == 2 && strcmp(s[j].name, s[j + 1].name) > 0) {
@@ -235,6 +243,22 @@ void sortFileByChoice() {
             }
         }
     }
+
+    // Write sorted data back to file
+    fp = fopen("student.txt", "w");
+    if (fp == NULL) {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        fprintf(fp, "%s %d %.2f %d\n", s[i].name, s[i].roll_no,
+                s[i].marks.sgpa, s[i].marks.isa);
+    }
+    fclose(fp);
+
+    printf("Records sorted and file updated successfully.\n");
+}
 
 
     student = fopen("student.txt", "w");
