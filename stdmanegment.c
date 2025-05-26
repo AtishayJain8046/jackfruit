@@ -261,20 +261,7 @@ void sortFileByChoice() {
 }
 
 
-    student = fopen("student.txt", "w");
-    if (student == NULL) {
-        printf("Error opening file for writing.\n");
-        return;
-    }
-
-    for (int i = 0; i < count; i++) {
-        fprintf(student, "%s %d %.2f %d\n", s[i].name, s[i].roll_no,
-                s[i].marks.sgpa, s[i].marks.isa);
-    }
-
-    fclose(student);
-    printf("Records sorted and file updated successfully.\n");
-}
+    
 
 void deleteRecord() {
     struct student s[100];
